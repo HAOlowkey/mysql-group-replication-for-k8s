@@ -1,0 +1,28 @@
+{{- if $.Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mysql.name" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "mysql.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+      protocol: TCP
+      name: http
+      {{- if contains "NodePort" .Values.service.type }}
+      nodePort: {{.Values.service.nodePort}}
+      {{- end }}
+    {{- if eq $.Values.architecture "group-replication" }}
+    - port: 33061
+      targetPort: 33061
+      name: mgr
+    {{- end }}
+  selector:
+    {{- include "mysql.selectorLabels" . | nindent 4 }}
+  publishNotReadyAddresses: true
+  clusterIP: None
+{{- end }} 

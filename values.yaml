@@ -1,0 +1,95 @@
+enabled: true
+
+# Support standalone\group-replication architecture mode
+architecture: group-replication
+
+global:
+  ## Configuration of MySQL
+  mysql:
+    secretName: mysql
+
+auth:
+  username: abc
+  password: Abc@123!
+  rootPassword: Root@123!
+  replicationUser: repl
+  replicationPassword: repl@123!
+
+persistence:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+image:
+  # Repository for container
+  repository: mysql
+  tag: 8.0.26
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  # pullSecrets:
+  # - name: regcred
+
+service:
+  type: ClusterIP
+  externalPort: 3306
+  internalPort: 3306
+  #nodePort: 30001
+
+init:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1G
+    requests:
+      cpu: 500m
+      memory: 1G
+
+proxySQL:
+  replicaCount: 1
+  image:
+    # Repository for container
+    repository: proxysql
+    tag: 2.4.2
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+    # pullSecrets:
+    # - name: regcred
+  service:
+    type: ClusterIP
+    externalPort: 6033
+    internalPort: 6033
+    #nodePort: 30002
+  auth:
+    monitorUsername: monitor
+    monitorPassword: Monitor@123!
+  resources: {}
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 2
+  #   memory: 4G
+  # requests:
+  #   cpu: 2
+  #   memory: 4G
+
+nodeAffinity: {}
+# nodeAffinity:
+#   requiredDuringSchedulingIgnoredDuringExecution:
+#     nodeSelectorTerms:
+#       - matchExpressions:
+#           - key: mysql-group-replication
+#             operator: Exists
+
+tolerations: []
+# tolerations:
+#   - effect: NoSchedule
+#     operator: Exists
+#   - key: CriticalAddonsOnly
+#     operator: Exists
+#   - effect: NoExecute
+#     operator: Exists

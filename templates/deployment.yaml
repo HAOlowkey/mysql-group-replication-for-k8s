@@ -1,0 +1,98 @@
+{{- if and ($.Values.enabled) (eq $.Values.architecture "group-replication") }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mysql.name" . }}-proxysql
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "mysql.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.proxySQL.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: proxysql
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: proxysql
+    spec:
+      {{- with .Values.proxySQL.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: proxysql
+          image: "{{ .Values.proxySQL.image.repository }}:{{ .Values.proxySQL.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.proxySQL.image.pullPolicy }}
+          command:
+          - proxysql
+          - -c
+          - /etc/proxysql.cnf
+          - -f
+          ports:
+            - name: proxysql
+              containerPort: 6033
+              protocol: TCP
+            - name: admin
+              containerPort: 6032
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -ec
+              - |
+                hg0_avail="$(mysql -h127.0.0.1 -P6032 -uadmin -padmin -NB -e"select count(*) from runtime_mysql_servers where hostgroup_id = 0")"
+
+                if [[ $hg0_avail -eq 1 ]]; then
+                  echo "HG0 Availability Success"
+                  exit 0
+                else
+                  echo "HG0 Availability Failure - MySQL backends found: $hg0_avail"
+                  exit 1
+                fi
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -ec
+              - |
+                hg0_avail="$(mysql -h127.0.0.1 -P6032 -uadmin -padmin -NB -e"select count(*) from runtime_mysql_servers where hostgroup_id = 0")"
+
+                if [[ $hg0_avail -eq 1 ]]; then
+                  echo "HG0 Availability Success"
+                  exit 0
+                else
+                  echo "HG0 Availability Failure - MySQL backends found: $hg0_avail"
+                  exit 1
+                fi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/proxysql.cnf
+              subPath: proxysql.cnf
+          resources:
+            {{- toYaml .Values.proxySQL.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "mysql.name" . }}-proxysql-config
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: proxysql
+              topologyKey: kubernetes.io/hostname
+        {{- with .Values.nodeAffinity }}
+        nodeAffinity:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+{{- end }}
