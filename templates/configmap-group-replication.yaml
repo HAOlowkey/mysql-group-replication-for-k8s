@@ -1,4 +1,4 @@
-{{- if and ($.Values.enabled) (eq $.Values.architecture "group-replication") }}
+{{- if eq .Values.architecture "group-replication" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

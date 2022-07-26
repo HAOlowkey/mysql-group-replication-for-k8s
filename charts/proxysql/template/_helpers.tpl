@@ -49,35 +49,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "mysql.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-Return the proper MySQL image name
-*/}}
-{{- define "mysql.image" -}}
-{{- .Values.image.registry }}/{{- .Values.image.repository }}:{{- .Values.image.tag }}
-{{- end -}}
-
-{{/*
-Return the proper Docker Image Registry Secret Names
-*/}}
-{{- define "mysql.imagePullSecrets" -}}
-  {{ if not (empty .Values.image.pullSecrets) }}
-imagePullSecrets:
-    {{- range .Values.image.pullSecrets -}}
-- name: {{ . }}
-    {{- end }}
-  {{- end }}
-{{- end -}}
-
-{{/*
-Renders a value that contains template.
-Usage:
-{{ include "common.tplvalues.render" ( dict "value" .Values.path.to.the.Value "context" $) }}
-*/}}
-{{- define "common.tplvalues.render" -}}
-    {{- if typeIs "string" .value }}
-        {{- tpl .value .context }}
-    {{- else }}
-        {{- tpl (.value | toYaml) .context }}
-    {{- end }}
-{{- end -}}

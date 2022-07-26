@@ -1,4 +1,3 @@
-{{- if $.Values.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -9,18 +8,18 @@ metadata:
 spec:
   volumeClaimTemplates:
   - metadata:
-      name: {{ template "mysql.name" . }}-data
+      name: data
       labels:
         {{- include "mysql.labels" . | nindent 8 }}
     spec:
       {{- with .Values.persistence.accessModes }}
       accessModes:
-      {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
       resources:
         requests:
           storage: {{ .Values.persistence.size }}
-      storageClassName: {{ .Values.persistence.storageClassName }}
+      storageClassName: {{ default "" .Values.persistence.storageClassName | quote }}
       volumeMode: Filesystem
   podManagementPolicy: OrderedReady
   {{- if eq $.Values.architecture "group-replication" }}
@@ -39,24 +38,20 @@ spec:
       labels:
         {{- include "mysql.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.image.pullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- include "mysql.imagePullSecrets" . | nindent 8 }}
       initContainers:
       - name: init-container
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ include "mysql.image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         command:
         - /bin/bash
-        - /opt/mysql_manage.sh
+        - -c
+        - /opt/run_service.sh
         - service
         - init
         envFrom:
-          - secretRef:
-              name: {{ .Values.global.mysql.secretName }}
-          - secretRef:
-              name: {{ include "mysql.name" . }}-auth
+        - secretRef:
+            name: {{ include "mysql.name" . }}
         env:
         - name: DATA_PATH
           value: /mysql
@@ -66,17 +61,18 @@ spec:
           value: {{ .Values.architecture }}
         volumeMounts:
         - mountPath: /mysql
-          name: {{ template "mysql.name" . }}-data
+          name: data
         - mountPath: /config
           name: config
         - mountPath: /opt
           name: script
-        resources:
-          {{- toYaml .Values.init.resources | nindent 12 }}
+        resources: 
+          {{- toYaml .Values.resources | nindent 12 }}
       containers:
       - command:
         - /bin/bash
-        - /opt/mysql_manage.sh
+        - -c
+        - /opt/run_service.sh
         - service
         - start
         lifecycle:
@@ -84,48 +80,55 @@ spec:
             exec:
               command:
               - /bin/bash
-              - /opt/mysql_manage.sh
+              - -c
+              - /opt/run_service.sh
               - replication
               - init
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ include "mysql.image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         name: mysql
         envFrom:
           - secretRef:
-              name: {{ include "mysql.name" . }}-auth
+              name: {{ include "mysql.name" . }}
         ports:
-        - containerPort: {{ $.Values.service.internalPort }}
+        - containerPort: {{ .Values.service.ports.mysql }}
           name: mysql
           protocol: TCP
-        {{- if eq $.Values.architecture "group-replication" }}
-        - containerPort: 33061
-          name: mgr
+        {{- if eq .Values.architecture "group-replication" }}
+        - containerPort: {{ .Values.service.ports.group }}
+          name: group
           protocol: TCP
         {{- end }}
-        livenessProbe:
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.livenessProbe "enabled") "context" $) | nindent 10 }}
           exec:
             command:
             - /bin/bash
-            - /opt/mysql_manage.sh
+            - c
+            - /opt/run_service.sh
             - service
             - status
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        readinessProbe:
+        {{- end}}
+        {{- if .Values.readinessProbe.enabled }}
+        readinessProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.readinessProbe "enabled") "context" $) | nindent 10 }}
           exec:
             command:
             - /bin/bash
-            - /opt/mysql_manage.sh
+            - -c
+            - /opt/run_service.sh
             - service
             - status
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+        {{- end}}
+        {{- if .Values.startupProbe.enabled }}
+        startupProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.startupProbe "enabled") "context" $) | nindent 10 }}
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /opt/run_service.sh
+            - service
+            - status
+        {{- end}}
         env:
         - name: DATA_PATH
           value: /mysql
@@ -136,21 +139,21 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.global.mysql.secretName }}
+              name: {{ include "mysql.name" . }}
               key: MYSQL_USER
         - name: MYSQL_PASS
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.global.mysql.secretName }}
+              name: {{ include "mysql.name" . }}
               key: MYSQL_PASS
         volumeMounts:
         - mountPath: /mysql
-          name: {{ template "mysql.name" . }}-data
+          name: data
         - mountPath: /config
           name: config
         - mountPath: /opt
           name: script
-        resources:
+        resources: 
           {{- toYaml .Values.resources | nindent 12 }}
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
@@ -161,19 +164,16 @@ spec:
       - configMap:
           name: {{ include "mysql.name" . }}-script
         name: script
+
+        {{- if .Values.primary.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.primary.affinity "context" $) | nindent 8 }}
+      {{- else }}
       affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  {{- include "mysql.selectorLabels" . | nindent 18 }}
-              topologyKey: kubernetes.io/hostname
-        {{- with .Values.nodeAffinity }}
-        nodeAffinity:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-      {{- if .Values.tolerations }}
-      tolerations:
-        {{ toYaml .Values.tolerations | indent 8 }}
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.primary.podAffinityPreset "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.primary.podAntiAffinityPreset "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.primary.nodeAffinityPreset.type "key" .Values.primary.nodeAffinityPreset.key "values" .Values.primary.nodeAffinityPreset.values) | nindent 10 }}
       {{- end }}
-{{- end }}
+
+      {{- if .Values.primary.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.primary.tolerations "context" $) | nindent 8 }}
+      {{- end }}
