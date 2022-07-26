@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: {{ include "mysql.name" . }}
   namespace: {{ $.Release.Namespace }}
-  labels:
-    {{- include "mysql.labels" . | nindent 4 }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -20,7 +19,6 @@ spec:
       targetPort: group
       name: group
     {{- end }}
-  selector:
-    {{- include "mysql.selectorLabels" . | nindent 4 }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
   publishNotReadyAddresses: true
   clusterIP: None

@@ -4,5 +4,4 @@ metadata:
   name: {{ include "mysql.name" . }}-script
   namespace: {{ $.Release.Namespace }}
 data:
-  run_service.sh: |
 {{ (.Files.Glob "files/run_service.sh").AsConfig | indent 2 }}

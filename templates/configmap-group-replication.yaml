@@ -78,12 +78,12 @@ data:
     transaction_write_set_extraction=XXHASH64
     loose-group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     loose-group_replication_start_on_boot=ON
-    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:33061,{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:33061,{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:33061"
+    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }}"
     loose-group_replication_ip_allowlist="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
     loose-group_replication_bootstrap_group=OFF
     bind-address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}"
     report_host="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}"
-    loose-group_replication_local_address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:33061"
+    loose-group_replication_local_address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }}"
 
     #innodb configuration
     innodb_buffer_pool_size=3910M    #Physical memory 50%
@@ -201,12 +201,12 @@ data:
     transaction_write_set_extraction=XXHASH64
     loose-group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     loose-group_replication_start_on_boot=ON
-    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:33061,{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:33061,{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:33061"
+    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }}"
     loose-group_replication_ip_allowlist="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
     loose-group_replication_bootstrap_group=OFF
     bind-address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}"
     report_host="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}"
-    loose-group_replication_local_address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:33061"
+    loose-group_replication_local_address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }}"
 
     #innodb configuration
     innodb_buffer_pool_size=3910M    #Physical memory 50%
@@ -324,12 +324,12 @@ data:
     transaction_write_set_extraction=XXHASH64
     loose-group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     loose-group_replication_start_on_boot=ON
-    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:33061,{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:33061,{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:33061"
+    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }}"
     loose-group_replication_ip_allowlist="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
     loose-group_replication_bootstrap_group=OFF
     bind-address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
     report_host="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
-    loose-group_replication_local_address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:33061"
+    loose-group_replication_local_address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.service.ports.group }}"
 
     #innodb configuration
     innodb_buffer_pool_size=3910M    #Physical memory 50%

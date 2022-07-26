@@ -22,9 +22,9 @@ image:
   ##
   pullSecrets: []
 
-## @param architecture MySQL architecture (`standalone` or `replicaiton`)
+## @param architecture MySQL architecture (`standalone` or `group-replication`)
 ##
-architecture: group-replicaiton
+architecture: group-replication
 ## MySQL Authentication parameters
 ##
 auth:
