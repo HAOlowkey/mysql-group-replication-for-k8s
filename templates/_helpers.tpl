@@ -1,15 +1,15 @@
 {{/*
-Expand the name of the chart.
+Expand the name of the release.
 */}}
 {{- define "mysql.name" -}}
-{{- printf "%s-%s" .Release.Name "mysql" | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name (include "mysql.serviceName" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Expand the service domain of the chart.
 */}}
-{{- define "mysql.service" -}}
-{{ include "mysql.name" . }}
+{{- define "mysql.serviceName" -}}
+{{ default "mysql" .Values.global.mysql.service.name }}
 {{- end }}
 
 {{/*

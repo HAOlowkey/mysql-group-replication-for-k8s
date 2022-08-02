@@ -45,6 +45,9 @@ data:
     # defines all the MySQL servers
     mysql_servers =
     (
+      { address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}" , port={{ .Values.global.mysql.service.ports.mysql }} , hostgroup=0, max_connections=5000 },
+      { address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}" , port={{ .Values.global.mysql.service.ports.mysql }} , hostgroup=0, max_connections=5000 },
+      { address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}" , port={{ .Values.global.mysql.service.ports.mysql }} , hostgroup=0, max_connections=5000 }
     )
 
     # defines all the MySQL users

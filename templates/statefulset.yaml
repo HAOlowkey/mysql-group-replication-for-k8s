@@ -83,11 +83,11 @@ spec:
           - secretRef:
               name: {{ include "mysql.name" . }}
         ports:
-        - containerPort: {{ .Values.service.ports.mysql }}
+        - containerPort: {{ .Values.global.mysql.service.ports.mysql }}
           name: mysql
           protocol: TCP
         {{- if eq .Values.global.architecture "group-replication" }}
-        - containerPort: {{ .Values.service.ports.group }}
+        - containerPort: {{ .Values.global.mysql.service.ports.group }}
           name: group
           protocol: TCP
         {{- end }}

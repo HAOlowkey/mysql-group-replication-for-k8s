@@ -7,6 +7,15 @@ global:
     password: "Abc@123!"
     monitorUsername: "monitor"
     monitorPassword: "Monitor@123!"
+  mysql:
+    service:
+      name: "mgr"
+      type: ClusterIP
+      ports:
+        mysql: 3306
+        group: 33061
+      nodePorts:
+        mysql: 33306
 
 image:
   registry: docker.io
@@ -37,14 +46,6 @@ persistence:
   accessModes:
     - ReadWriteOnce
   size: 10Gi
-
-service:
-  type: ClusterIP
-  ports:
-    mysql: 3306
-    group: 33061
-  nodePorts:
-    mysql: 33306
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

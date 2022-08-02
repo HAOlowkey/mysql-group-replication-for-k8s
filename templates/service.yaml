@@ -5,17 +5,17 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.global.mysql.service.type }}
   ports:
-    - port: {{ .Values.service.ports.mysql }}
+    - port: {{ .Values.global.mysql.service.ports.mysql }}
       targetPort: mysql
       protocol: TCP
       name: mysql
-      {{- if contains "NodePort" .Values.service.type }}
-      nodePort: {{.Values.service.nodePort}}
+      {{- if contains "NodePort" .Values.global.mysql.service.type }}
+      nodePort: {{.Values.global.mysql.service.nodePort}}
       {{- end }}
     {{- if eq .Values.global.architecture "group-replication" }}
-    - port: {{ .Values.service.ports.group }}
+    - port: {{ .Values.global.mysql.service.ports.group }}
       targetPort: group
       protocol: TCP
       name: group

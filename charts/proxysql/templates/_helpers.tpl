@@ -1,8 +1,22 @@
 {{/*
-Expand the name of the chart.
+Expand the name of the release.
 */}}
 {{- define "proxysql.name" -}}
 {{- printf "%s-%s" .Release.Name "proxysql" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Expand the name of the release.
+*/}}
+{{- define "mysql.name" -}}
+{{- printf "%s-%s" .Release.Name (include "mysql.serviceName" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Expand the service domain of the chart.
+*/}}
+{{- define "mysql.serviceName" -}}
+{{ default "mysql" .Values.global.mysql.service.name }}
 {{- end }}
 
 {{/*
