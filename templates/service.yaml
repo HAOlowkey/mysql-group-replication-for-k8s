@@ -14,11 +14,12 @@ spec:
       {{- if contains "NodePort" .Values.service.type }}
       nodePort: {{.Values.service.nodePort}}
       {{- end }}
-    {{- if eq .Values.architecture "group-replication" }}
+    {{- if eq .Values.global.architecture "group-replication" }}
     - port: {{ .Values.service.ports.group }}
       targetPort: group
+      protocol: TCP
       name: group
     {{- end }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  labels: {{- include "common.labels.matchLabels" . | nindent 4 }}
   publishNotReadyAddresses: true
   clusterIP: None

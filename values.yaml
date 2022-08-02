@@ -1,9 +1,12 @@
 global:
+  ## @param architecture MySQL architecture (`standalone` or `group-replication`)
+  ##
+  architecture: "group-replication"
   auth:
     username: "abc"
     password: "Abc@123!"
-    monitorUsername: monitor
-    monitorPassword: Monitor@123!
+    monitorUsername: "monitor"
+    monitorPassword: "Monitor@123!"
 
 image:
   registry: docker.io
@@ -22,9 +25,6 @@ image:
   ##
   pullSecrets: []
 
-## @param architecture MySQL architecture (`standalone` or `group-replication`)
-##
-architecture: group-replication
 ## MySQL Authentication parameters
 ##
 auth:

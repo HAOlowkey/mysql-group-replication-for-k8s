@@ -4,3 +4,5 @@ description: deploy mysql standalone or group-replication Helm chart for Kuberne
 type: application
 version: 1.1.1
 appVersion: 8.0.26
+dependencies:
+  - name: "proxysql"

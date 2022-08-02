@@ -1,4 +1,4 @@
-{{- if and ($.Values.enabled) (eq $.Values.architecture "standalone") }}
+{{- if eq .Values.global.architecture "standalone" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

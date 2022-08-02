@@ -1,4 +1,4 @@
-{{- if eq .Values.architecture "group-replication" }}
+{{- if eq .Values.global.architecture "group-replication" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

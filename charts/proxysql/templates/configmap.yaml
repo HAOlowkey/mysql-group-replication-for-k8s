@@ -1,8 +1,7 @@
-{{- if and ($.Values.enabled) (eq $.Values.architecture "group-replication") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "mysql.name" . }}-proxysql-config
+  name: {{ include "proxysql.name" . }}
   namespace: {{ $.Release.Namespace }}
 data:
   proxysql.cnf: |
@@ -22,14 +21,14 @@ data:
       default_query_timeout=36000000
       have_compress=true
       poll_timeout=2000
-      interfaces="0.0.0.0:{{ .Values.proxySQL.service.internalPort }}"
+      interfaces="0.0.0.0:{{ .Values.service.ports.proxysql }}"
       default_schema="information_schema"
       stacksize=1048576
       server_version="8.0.26"
       connect_timeout_server=3000
       monitor_enabled=true
-      monitor_username="{{ .Values.proxySQL.auth.monitorUsername }}"
-      monitor_password="{{ .Values.proxySQL.auth.monitorPassword }}"
+      monitor_username="{{ .Values.global.auth.monitorUsername }}"
+      monitor_password="{{ .Values.global.auth.monitorPassword }}"
       monitor_history=600000
       monitor_connect_timeout=600
       monitor_connect_interval=2000
@@ -46,15 +45,12 @@ data:
     # defines all the MySQL servers
     mysql_servers =
     (
-        { address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}" , port={{ .Values.service.externalPort }} , hostgroup=0, max_connections=5000 },
-        { address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}" , port={{ .Values.service.externalPort }} , hostgroup=0, max_connections=5000 },
-        { address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}" , port={{ .Values.service.externalPort }} , hostgroup=0, max_connections=5000 }
     )
 
     # defines all the MySQL users
     mysql_users:
     (
-      { username = "{{ .Values.auth.username }}" , password = "{{ .Values.auth.password }}" , default_hostgroup = 0 , active = 1 }
+      { username = "{{ .Values.global.auth.username }}" , password = "{{ .Values.global.auth.password }}" , default_hostgroup = 0 , active = 1 }
     )
 
 
@@ -97,4 +93,3 @@ data:
                     comment="MGR"
           }
     )
-{{- end }}
