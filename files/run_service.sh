@@ -188,7 +188,7 @@ FLUSH PRIVILEGES;
 EOF
         ;;
     *)
-        die 28 "${func_name}" "ARHC_MODE ${ARCH_MODE} not support!"
+        die 28 "${func_name}" "ARCH_MODE ${ARCH_MODE} not support!"
         ;;
     esac
 

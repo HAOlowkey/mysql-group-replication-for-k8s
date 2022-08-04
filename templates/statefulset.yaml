@@ -49,7 +49,7 @@ spec:
         - name: CONFIG_PATH
           value: /config
         - name: ARCH_MODE
-          value: {{ .Values.architecture }}
+          value: {{ .Values.global.architecture }}
         volumeMounts:
         - mountPath: /mysql
           name: data
