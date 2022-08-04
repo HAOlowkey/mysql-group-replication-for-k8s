@@ -32,7 +32,7 @@ Return the proper Docker Image Registry Secret Names
 {{- define "mysql.imagePullSecrets" -}}
   {{- if not (empty .Values.image.pullSecrets) }}
 imagePullSecrets:
-    {{- range .Values.image.pullSecrets -}}
+    {{ range .Values.image.pullSecrets -}}
 - name: {{ . }}
     {{- end }}
   {{- end }}
