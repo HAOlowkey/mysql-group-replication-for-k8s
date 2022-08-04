@@ -37,7 +37,6 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         command:
         - /bin/bash
-        - -c
         - /opt/run_service.sh
         - service
         - init
@@ -63,7 +62,6 @@ spec:
       containers:
       - command:
         - /bin/bash
-        - -c
         - /opt/run_service.sh
         - service
         - start
@@ -72,7 +70,6 @@ spec:
             exec:
               command:
               - /bin/bash
-              - -c
               - /opt/run_service.sh
               - replication
               - init
@@ -96,7 +93,6 @@ spec:
           exec:
             command:
             - /bin/bash
-            - c
             - /opt/run_service.sh
             - service
             - status
@@ -106,7 +102,6 @@ spec:
           exec:
             command:
             - /bin/bash
-            - -c
             - /opt/run_service.sh
             - service
             - status
@@ -116,7 +111,6 @@ spec:
           exec:
             command:
             - /bin/bash
-            - -c
             - /opt/run_service.sh
             - service
             - status
