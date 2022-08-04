@@ -80,4 +80,4 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "proxysql.name" . }}
+          name: {{ include "proxysql.name" . }}-config
