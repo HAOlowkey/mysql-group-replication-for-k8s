@@ -20,6 +20,6 @@ spec:
       protocol: TCP
       name: group
     {{- end }}
-  labels: {{- include "common.labels.matchLabels" . | nindent 4 }}
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
   publishNotReadyAddresses: true
   clusterIP: None

@@ -14,4 +14,4 @@ spec:
       {{- if contains "NodePort" .Values.service.type }}
       nodePort: {{.Values.service.nodePort}}
       {{- end }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  selector: {{- include "common.labels.standard" . | nindent 4 }}
