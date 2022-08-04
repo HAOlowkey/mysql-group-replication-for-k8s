@@ -165,7 +165,7 @@ service_init() {
         cat <<EOF >"${init_sql}"
 SET @@SESSION.SQL_LOG_BIN=0;
 INSERT INTO mysql.plugin (name, dl) VALUES ('validate_password', 'validate_password.so');
-ALTER USER root@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+ALTER USER root@'localhost' IDENTIFIED BY '${ROOT_PASSWORD}';
 CREATE USER ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASS}';
 GRANT ALL ON *.* to ${MYSQL_USER}@'%';
 FLUSH PRIVILEGES;
@@ -175,7 +175,7 @@ EOF
         cat <<EOF >"${init_sql}"
 SET @@SESSION.SQL_LOG_BIN=0;
 INSERT INTO mysql.plugin (name, dl) VALUES ('validate_password', 'validate_password.so');
-ALTER USER root@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+ALTER USER root@'localhost' IDENTIFIED BY '${ROOT_PASSWORD}';
 CREATE USER ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASS}';
 GRANT ALL ON *.* to ${MYSQL_USER}@'%';
 INSTALL PLUGIN group_replication SONAME 'group_replication.so';
@@ -223,7 +223,7 @@ service_start() {
 }
 
 service_status() {
-    mysqladmin status -uroot -p"${MYSQL_ROOT_PASSWORD}" -S "${DATA_PATH}/mysql.sock"
+    mysqladmin status -uroot -p"${ROOT_PASSWORD}" -S "${DATA_PATH}/mysql.sock"
 }
 
 service_stop() {
@@ -278,7 +278,7 @@ replication_init() {
     local sql="SELECT member_state FROM performance_schema.replication_group_members WHERE member_host LIKE '${HOSTNAME}%';"
 
     local member_state
-    member_state="$(mysql -u"root" -S "${DATA_PATH}/mysql.sock" -p''"${MYSQL_ROOT_PASSWORD}"'' -AN -s -e "${sql}" 2>/dev/null)"
+    member_state="$(mysql -u"root" -S "${DATA_PATH}/mysql.sock" -p''"${ROOT_PASSWORD}"'' -AN -s -e "${sql}" 2>/dev/null)"
 
     info "${func_name}" "member_status is ${member_state}"
 
@@ -302,7 +302,7 @@ replication_init() {
         STOP GROUP_REPLICATION;
         START GROUP_REPLICATION;"
         fi
-        mysql -u"root" -S "${DATA_PATH}/mysql.sock" -p''"${MYSQL_ROOT_PASSWORD}"'' -AN -s -e "${sql}" &>>"${LOG_FILE}" || {
+        mysql -u"root" -S "${DATA_PATH}/mysql.sock" -p''"${ROOT_PASSWORD}"'' -AN -s -e "${sql}" &>>"${LOG_FILE}" || {
             die 23 "${func_name}" " ${sql} failed"
         }
         info "${func_name}" "start group_replication success"
@@ -487,7 +487,7 @@ main() {
 
 [ -v DATA_PATH ] || die 10 "Globals" "get env DATA_PATH failed !"
 [ -v CONFIG_PATH ] || die 10 "Globals" "get env CONFIG_PATH failed !"
-[ -v MYSQL_ROOT_PASSWORD ] || die 10 "Globals" "get env MYSQL_ROOT_PASSWORD failed!"
+[ -v ROOT_PASSWORD ] || die 10 "Globals" "get env ROOT_PASSWORD failed!"
 [ -v ARCH_MODE ] || die 10 "Globals" "get env ARCH_MODE failed!"
 if [[ "${ARCH_MODE}" == "group-replication" ]]; then
     [ -v MYSQL_REPL_USER ] || die 10 "Globals" "get env MYSQL_REPL_USER failed!"
