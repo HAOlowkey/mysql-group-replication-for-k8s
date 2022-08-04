@@ -179,11 +179,11 @@ ALTER USER root@'localhost' IDENTIFIED BY '${ROOT_PASSWORD}';
 CREATE USER ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASS}';
 GRANT ALL ON *.* to ${MYSQL_USER}@'%';
 INSTALL PLUGIN group_replication SONAME 'group_replication.so';
-CREATE USER ${MYSQL_REPL_USER}@'%' IDENTIFIED BY '${MYSQL_REPL_PASSWORD}';
-GRANT REPLICATION SLAVE ON *.* TO ${MYSQL_REPL_USER}@'%';
-CREATE USER ${MYSQL_MONITOR_USER}@'%' IDENTIFIED BY '${MYSQL_MONITOR_PASSWORD}';
-GRANT SELECT ON sys.* TO ${MYSQL_MONITOR_USER}@'%';
-GRANT USAGE,REPLICATION CLIENT ON *.* TO ${MYSQL_MONITOR_USER}@'%';
+CREATE USER ${REPL_USER}@'%' IDENTIFIED BY '${REPL_PASS}';
+GRANT REPLICATION SLAVE ON *.* TO ${REPL_USER}@'%';
+CREATE USER ${MONITOR_USER}@'%' IDENTIFIED BY '${MONITOR_PASS}';
+GRANT SELECT ON sys.* TO ${MONITOR_USER}@'%';
+GRANT USAGE,REPLICATION CLIENT ON *.* TO ${MONITOR_USER}@'%';
 FLUSH PRIVILEGES;
 EOF
         ;;
@@ -291,14 +291,14 @@ replication_init() {
     repl_flag="$(cat "${REPL_FLAG_FILE}" 2>/dev/null)"
     if [[ "${repl_flag}" != "SUCCESS" ]]; then
         if [[ ${HOSTNAME##*-} -eq 0 ]]; then
-            sql="CHANGE MASTER TO MASTER_USER='${MYSQL_REPL_USER}', MASTER_PASSWORD='${MYSQL_REPL_PASSWORD}' FOR CHANNEL 'group_replication_recovery';
+            sql="CHANGE MASTER TO MASTER_USER='${REPL_USER}', MASTER_PASSWORD='${REPL_PASS}' FOR CHANNEL 'group_replication_recovery';
         STOP GROUP_REPLICATION;
         SET GLOBAL group_replication_bootstrap_group=ON;
         START GROUP_REPLICATION;
         SET GLOBAL group_replication_bootstrap_group=OFF;
         "
         else
-            sql="CHANGE MASTER TO MASTER_USER='${MYSQL_REPL_USER}', MASTER_PASSWORD='${MYSQL_REPL_PASSWORD}' FOR CHANNEL 'group_replication_recovery';
+            sql="CHANGE MASTER TO MASTER_USER='${REPL_USER}', MASTER_PASSWORD='${REPL_PASS}' FOR CHANNEL 'group_replication_recovery';
         STOP GROUP_REPLICATION;
         START GROUP_REPLICATION;"
         fi
@@ -490,10 +490,10 @@ main() {
 [ -v ROOT_PASSWORD ] || die 10 "Globals" "get env ROOT_PASSWORD failed!"
 [ -v ARCH_MODE ] || die 10 "Globals" "get env ARCH_MODE failed!"
 if [[ "${ARCH_MODE}" == "group-replication" ]]; then
-    [ -v MYSQL_REPL_USER ] || die 10 "Globals" "get env MYSQL_REPL_USER failed!"
-    [ -v MYSQL_REPL_PASSWORD ] || die 10 "Globals" "get env MYSQL_REPL_PASSWORD failed!"
-    [ -v MYSQL_MONITOR_USER ] || die 10 "Globals" "get env MYSQL_MONITOR_USER failed!"
-    [ -v MYSQL_MONITOR_PASSWORD ] || die 10 "Globals" "get env MYSQL_MONITOR_PASSWORD failed!"
+    [ -v REPL_USER ] || die 10 "Globals" "get env REPL_USER failed!"
+    [ -v REPL_PASS ] || die 10 "Globals" "get env REPL_PASS failed!"
+    [ -v MONITOR_USER ] || die 10 "Globals" "get env MONITOR_USER failed!"
+    [ -v MONITOR_PASS ] || die 10 "Globals" "get env MONITOR_PASS failed!"
 fi
 LOG_FILE="${DATA_PATH}/${FILE_NAME}.log"
 INIT_FLAG_FILE="${DATA_PATH}/.init.flag"
