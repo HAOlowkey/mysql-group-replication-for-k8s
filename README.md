@@ -18,18 +18,11 @@ $ helm uninstall my-release
 
 | Name                      | Description                                     | Value |
 | ------------------------- | ----------------------------------------------- | ----- |
-| `architecture`             | MySQL architecture (`standalone` or `group-replication`)                                                                                                                                  | `group-replication`          |
-| `global.auth.username`    | Name for a custom user to create     | `""`        |
-| `global.auth.password`    | Password for the new user. Ignored if existing secret is provided      | `""`    |
-| `global.auth.monitorUsername`    | Specify the username of ProxySQL monitor user to init      | `""`        |
-| `global.auth.monitorPassword`    | Specify the password of ProxySQL monitor user to init      | `""`    |
-
-### Common parameters
-
-| Name                     | Description                                                                                               | Value           |
-| ------------------------ | --------------------------------------------------------------------------------------------------------- | --------------- |
-| ``                | Install mysql enabled (using Helm capabilities if not set)                                                | `""`            |
-| `architecture`           | Support Standalone && Group-Replication architecture mode                                                 | `""`            |
+| `global.architecture`     | MySQL architecture (`standalone` or group-replication`) | `group-replication` |
+| `global.auth.username`    | Name for a custom user to create | `""` |
+| `global.auth.password`    | Password for the new user | `""` |
+| `global.auth.monitorUsername`    | Name for ProxySQL user to create | `""` |
+| `global.auth.monitorPassword`    | Password for ProxySQL ser to create | `""` |
 
 ### MySQL common parameters
 
