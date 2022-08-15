@@ -3,8 +3,8 @@
 
 To install the `my-release`:
 ```bash
-helm repo add myrepo https://haolowkey.github.io/helm-chart
-helm install my-release myrepo/mysql
+helm repo add mysqlrepo https://haolowkey.github.io/helm-mysql
+helm install my-release mysqlrepo/mysql
 ```
 
 To uninstall/delete the `my-release`:
