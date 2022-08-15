@@ -19,10 +19,10 @@ $ helm uninstall my-release
 | Name                      | Description                                     | Value |
 | ------------------------- | ----------------------------------------------- | ----- |
 | `architecture`             | MySQL architecture (`standalone` or `group-replication`)                                                                                                                                  | `group-replication`          |
-| `global.auth.username`    | Specify the username of MySQL user to init      | `"testuser"`        |
-| `global.auth.password`    | Specify the password of MySQL user to init      | `"testpassword"`    |
-| `global.auth.monitorUsername`    | Specify the username of ProxySQL monitor user to init      | `"monitor"`        |
-| `global.auth.monitorPassword`    | Specify the password of ProxySQL monitor user to init      | `"monitor"`    |
+| `global.auth.username`    | Name for a custom user to create     | `""`        |
+| `global.auth.password`    | Password for the new user. Ignored if existing secret is provided      | `""`    |
+| `global.auth.monitorUsername`    | Specify the username of ProxySQL monitor user to init      | `""`        |
+| `global.auth.monitorPassword`    | Specify the password of ProxySQL monitor user to init      | `""`    |
 
 ### Common parameters
 
@@ -40,8 +40,5 @@ $ helm uninstall my-release
 | `image.tag`                | MySQL image tag (immutable tags are recommended)                                                                                                                                    | `8.0.26` |
 | `image.pullPolicy`         | MySQL image pull policy                                                                                                                                                             | `IfNotPresent`        |
 | `image.pullSecrets`        | Specify docker-registry secret names as an array                                                                                                                                    | `[]`                  |
-| `auth.rootPassword`        | Password for the `root` user. Ignored if existing secret is provided                                                                                                                | `""`                  |
-| `auth.username`            | Name for a custom user to create                                                                                                                                                    | `""`                  |
-| `auth.password`            | Password for the new user. Ignored if existing secret is provided                                                                                                                   | `""`                  |
 | `auth.replicationUser`     | MySQL replication user                                                                                                                                                              | `replicator`          |
 | `auth.replicationPassword` | MySQL replication user password. Ignored if existing secret is provided                                                                                                             | `""`                  |
