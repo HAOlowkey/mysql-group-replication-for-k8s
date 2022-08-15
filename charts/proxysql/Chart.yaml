@@ -2,5 +2,5 @@ apiVersion: v2
 name: proxysql
 description: deploy proxysql for mysql group replication Helm chart for Kubernetes
 type: application
-version: 1.1.1
+version: 2.0.1
 appVersion: 2.4.2
