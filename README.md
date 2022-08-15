@@ -1,20 +1,17 @@
 # mysql-group-replication-for-k8s
 使用helm安装mysql-group-replication 使用proxySQL作为代理
 
-打包
-```
-helm package .
-```
-
 To install the `my-release`:
+
 ```
-helm install my-release ./
+helm repo add myrepo https://haolowkey.github.io/helm-chart
+helm install my-releasemyrepo/mysql
 ```
 
 To uninstall/delete the `my-release`:
 
 ```bash
-$ helm delete my-release
+$ helm uninstall my-release
 ```
 
 ## Parameters
