@@ -36,7 +36,7 @@ data:
     #query_cache_size=0
 
     #Connection configuration
-    port={{ .Values.service.internalPort }}
+    port={{ .Values.global.mysql.service.ports.mysql }}
     skip-name-resolve
     max_connections=3050
     max_user_connections=1900
@@ -105,13 +105,13 @@ data:
     transaction_isolation=READ-COMMITTED
 
     [mysql]
-    port={{ .Values.service.internalPort }}
+    port={{ .Values.global.mysql.service.ports.mysql }}
     prompt=\\u@\\d \\r:\\m:\\s>
     no-auto-rehash
     socket=/mysql/mysql.sock
 
     [client]
-    port={{ .Values.service.internalPort }}
+    port={{ .Values.global.mysql.service.ports.mysql }}
     default-character-set=utf8mb4
 
     [mysqladmin]

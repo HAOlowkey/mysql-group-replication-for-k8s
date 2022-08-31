@@ -261,11 +261,6 @@ replication_init() {
 
     info "${func_name}" "Starting run ${func_name} ..."
 
-    if [[ "${ARCH_MODE}" == "standalone" ]]; then
-        info "${func_name}" "architecture is standalone, no need to execute replication init"
-        exit 0
-    fi
-
     #判断服务状态是否正常
     sleep 5
     service_status || {
