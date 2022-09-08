@@ -1,24 +1,27 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "mysql.name" . }}
+  name: {{ include "mysql.fullname" . }}
   namespace: {{ $.Release.Namespace }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
 spec:
-  type: {{ .Values.global.mysql.service.type }}
+  type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.global.mysql.service.ports.mysql }}
-      targetPort: mysql
-      protocol: TCP
-      name: mysql
-      {{- if contains "NodePort" .Values.global.mysql.service.type }}
-      nodePort: {{.Values.global.mysql.service.nodePort}}
-      {{- end }}
-    {{- if eq .Values.global.architecture "group-replication" }}
-    - port: {{ .Values.global.mysql.service.ports.group }}
-      targetPort: group
-      protocol: TCP
-      name: group
+  - port: {{ .Values.service.ports.mysql }}
+    targetPort: {{ .Values.service.ports.mysql }}
+    protocol: TCP
+    name: {{ .Values.service.portsName.mysql }}
+    {{- if contains "NodePort" .Values.service.type }}
+    nodePort: {{.Values.service.nodePorts.mysql}}
+    {{- end }}
+    {{- if eq .Values.architecture "group-replication" }}
+  - port: {{ .Values.service.ports.group }}
+    targetPort: {{ .Values.service.ports.group }}
+    protocol: TCP
+    name: {{ .Values.service.portsName.group }}
+    {{- if contains "NodePort" .Values.service.type }}
+    nodePort: {{.Values.service.nodePorts.group}}
+    {{- end }}
     {{- end }}
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
   publishNotReadyAddresses: true

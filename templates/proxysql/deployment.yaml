@@ -1,0 +1,88 @@
+{{- if eq .Values.architecture "group-replication" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "proxysql.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "proxysql.labels.standard" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.proxysql.replicaCount }}
+  selector:
+    matchLabels: {{- include "proxysql.labels.matchLabels" . | nindent 8 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels: {{ include "proxysql.labels.standard" . | nindent 8 }}
+    spec:
+      {{- include "proxysql.imagePullSecrets" . | nindent 8 }}
+      {{- if .Values.proxysql.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.proxysql.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.proxysql.podAntiAffinityPreset "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.proxysql.nodeAffinityPreset.type "key" .Values.proxysql.nodeAffinityPreset.key "values" .Values.proxysql.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.proxysql.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.proxysql.tolerations "context" $) | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: proxysql
+        image: {{ include "proxysql.image" . }}
+        imagePullPolicy: {{ .Values.proxysql.image.pullPolicy | quote }}
+        command:
+        - proxysql
+        - -c
+        - /etc/proxysql.cnf
+        - -f
+        envFrom:
+        - secretRef:
+            name: {{ include "mysql.fullname" . }}
+        ports:
+        - name: {{ .Values.proxysql.service.portsName.proxysql }}
+          containerPort: {{ .Values.proxysql.service.ports.proxysql }}
+          protocol: TCP
+        - name: {{ .Values.proxysql.service.portsName.admin }}
+          containerPort: {{ .Values.proxysql.service.ports.admin }}
+          protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -ec
+            - |
+              hg0_avail="$(mysql -h127.0.0.1 -P{{ .Values.proxysql.service.ports.admin }} -u${PROXYSQL_USER} -p${PROXYSQL_PASS} -NB -e"select count(*) from runtime_mysql_servers where hostgroup_id = 0")"
+              if [[ $hg0_avail -eq 1 ]]; then
+                echo "HG0 Availability Success"
+                exit 0
+              else
+                echo "HG0 Availability Failure - MySQL backends found: $hg0_avail"
+                exit 1
+              fi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -ec
+            - |
+              hg0_avail="$(mysql -h127.0.0.1 -P{{ .Values.proxysql.service.ports.admin }} -u${PROXYSQL_USER} -p${PROXYSQL_PASS} -NB -e"select count(*) from runtime_mysql_servers where hostgroup_id = 0")"
+              if [[ $hg0_avail -eq 1 ]]; then
+                echo "HG0 Availability Success"
+                exit 0
+              else
+                echo "HG0 Availability Failure - MySQL backends found: $hg0_avail"
+                exit 1
+              fi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/proxysql.cnf
+          subPath: proxysql.cnf
+        resources: 
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "proxysql.fullname" . }}
+{{- end }}

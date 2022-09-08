@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "mysql.name" . }}
+  name: {{ include "mysql.fullname" . }}
   namespace: {{ $.Release.Namespace }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
 spec:
-  {{- if eq .Values.global.architecture "group-replication" }}
+  {{- if eq .Values.architecture "group-replication" }}
   replicas: 3
-  {{- else if eq .Values.global.architecture "standalone" }}
+  {{- else if eq .Values.architecture "standalone" }}
   replicas: 1
   {{- end }}
   podManagementPolicy: OrderedReady
   selector:
     matchLabels: {{- include "common.labels.matchLabels" . | nindent 8 }}
-  serviceName: {{ include "mysql.name" . }}
+  serviceName: {{ include "mysql.fullname" . }}
   updateStrategy:
     type: RollingUpdate
   template:
@@ -42,14 +42,14 @@ spec:
         - init
         envFrom:
         - secretRef:
-            name: {{ include "mysql.name" . }}
+            name: {{ include "mysql.fullname" . }}
         env:
         - name: DATA_PATH
           value: /mysql
         - name: CONFIG_PATH
           value: /config
         - name: ARCH_MODE
-          value: {{ .Values.global.architecture }}
+          value: {{ .Values.architecture }}
         volumeMounts:
         - mountPath: /mysql
           name: data
@@ -80,14 +80,14 @@ spec:
         name: mysql
         envFrom:
           - secretRef:
-              name: {{ include "mysql.name" . }}
+              name: {{ include "mysql.fullname" . }}
         ports:
-        - containerPort: {{ .Values.global.mysql.service.ports.mysql }}
-          name: mysql
+        - name: {{ .Values.service.portsName.mysql }}
+          containerPort: {{ .Values.service.ports.mysql }}
           protocol: TCP
         {{- if eq .Values.global.architecture "group-replication" }}
-        - containerPort: {{ .Values.global.mysql.service.ports.group }}
-          name: group
+        - name: {{ .Values.service.portsName.group }}
+          containerPort: {{ .Values.service.ports.group }}
           protocol: TCP
         {{- end }}
         {{- if .Values.livenessProbe.enabled }}
@@ -124,16 +124,6 @@ spec:
           value: /config
         - name: ARCH_MODE
           value: {{ .Values.architecture }}
-        - name: MYSQL_USER
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "mysql.name" . }}
-              key: MYSQL_USER
-        - name: MYSQL_PASS
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "mysql.name" . }}
-              key: MYSQL_PASS
         volumeMounts:
         - mountPath: /mysql
           name: data
@@ -147,10 +137,10 @@ spec:
       terminationGracePeriodSeconds: 30
       volumes:
       - configMap:
-          name: {{ include "mysql.name" . }}-config
+          name: {{ include "mysql.fullname" . }}-config
         name: config
       - configMap:
-          name: {{ include "mysql.name" . }}-script
+          name: {{ include "mysql.fullname" . }}-script
         name: script
   volumeClaimTemplates:
   - metadata:

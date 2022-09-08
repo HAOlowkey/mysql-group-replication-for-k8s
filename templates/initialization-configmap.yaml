@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "mysql.name" . }}-script
+  name: {{ include "mysql.fullname" . }}-script
   namespace: {{ $.Release.Namespace }}
 data:
 {{ (.Files.Glob "files/run_service.sh").AsConfig | indent 2 }}

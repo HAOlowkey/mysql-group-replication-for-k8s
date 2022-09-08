@@ -1,0 +1,19 @@
+{{- if eq .Values.architecture "group-replication" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "proxysql.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "proxysql.labels.standard" . | nindent 4 }}
+spec:
+  type: {{ .Values.proxysql.service.type }}
+  ports:
+  - port: {{ .Values.proxysql.service.ports.proxysql }}
+    targetPort: {{ .Values.proxysql.service.ports.proxysql }}
+    protocol: TCP
+    name: {{ .Values.proxysql.service.portsName.proxysql }}
+    {{- if contains "NodePort" .Values.service.type }}
+    nodePort: {{.Values.proxysql.service.nodePorts.proxysql}}
+    {{- end }}
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
+{{- end }}

@@ -1,10 +1,10 @@
-{{- if eq .Values.global.architecture "group-replication" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "mysql.name" . }}-config
+  name: {{ include "mysql.fullname" . }}-config
   namespace: {{ $.Release.Namespace }}
 data:
+{{- if eq .Values.architecture "group-replication" }}
   my-0.cnf: |
     [mysqld]
     super_read_only=on
@@ -37,7 +37,7 @@ data:
     #query_cache_size=0
 
     #Connection configuration
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
     skip-name-resolve
     max_connections=3050
     max_user_connections=1900
@@ -78,12 +78,12 @@ data:
     transaction_write_set_extraction=XXHASH64
     loose-group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     loose-group_replication_start_on_boot=ON
-    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }}"
-    loose-group_replication_ip_allowlist="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
+    loose-group_replication_group_seeds="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }},{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }},{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }}"
+    loose-group_replication_ip_allowlist="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }},{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }},{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}"
     loose-group_replication_bootstrap_group=OFF
-    bind-address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}"
-    report_host="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}"
-    loose-group_replication_local_address="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }}"
+    bind-address="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }}"
+    report_host="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }}"
+    loose-group_replication_local_address="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }}"
 
     #innodb configuration
     innodb_buffer_pool_size=3910M    #Physical memory 50%
@@ -114,13 +114,13 @@ data:
     transaction_isolation=READ-COMMITTED
 
     [mysql]
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
     prompt=\\u@\\d \\r:\\m:\\s>
     no-auto-rehash
     socket=/mysql/mysql.sock
 
     [client]
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
 
     [mysqladmin]
     socket=/mysql/mysql.sock
@@ -160,7 +160,7 @@ data:
     #query_cache_size=0
 
     #Connection configuration
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
     skip-name-resolve
     max_connections=3050
     max_user_connections=1900
@@ -201,12 +201,12 @@ data:
     transaction_write_set_extraction=XXHASH64
     loose-group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     loose-group_replication_start_on_boot=ON
-    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }}"
-    loose-group_replication_ip_allowlist="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
+    loose-group_replication_group_seeds="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }},{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }},{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }}"
+    loose-group_replication_ip_allowlist="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }},{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }},{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}"
     loose-group_replication_bootstrap_group=OFF
-    bind-address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}"
-    report_host="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}"
-    loose-group_replication_local_address="{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }}"
+    bind-address="{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }}"
+    report_host="{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }}"
+    loose-group_replication_local_address="{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }}"
 
     #innodb configuration
     innodb_buffer_pool_size=3910M    #Physical memory 50%
@@ -237,13 +237,13 @@ data:
     transaction_isolation=READ-COMMITTED
 
     [mysql]
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
     prompt=\\u@\\d \\r:\\m:\\s>
     no-auto-rehash
     socket=/mysql/mysql.sock
 
     [client]
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
 
     [mysqladmin]
     socket=/mysql/mysql.sock
@@ -283,7 +283,7 @@ data:
     #query_cache_size=0
 
     #Connection configuration
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
     skip-name-resolve
     max_connections=3050
     max_user_connections=1900
@@ -324,12 +324,12 @@ data:
     transaction_write_set_extraction=XXHASH64
     loose-group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     loose-group_replication_start_on_boot=ON
-    loose-group_replication_group_seeds="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }}"
-    loose-group_replication_ip_allowlist="{{ include "mysql.name" . }}-0.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-1.{{ include "mysql.name" . }},{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
+    loose-group_replication_group_seeds="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }},{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }},{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }}"
+    loose-group_replication_ip_allowlist="{{ include "mysql.fullname" . }}-0.{{ include "mysql.fullname" . }},{{ include "mysql.fullname" . }}-1.{{ include "mysql.fullname" . }},{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}"
     loose-group_replication_bootstrap_group=OFF
-    bind-address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
-    report_host="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}"
-    loose-group_replication_local_address="{{ include "mysql.name" . }}-2.{{ include "mysql.name" . }}:{{ .Values.global.mysql.service.ports.group }}"
+    bind-address="{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}"
+    report_host="{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}"
+    loose-group_replication_local_address="{{ include "mysql.fullname" . }}-2.{{ include "mysql.fullname" . }}:{{ .Values.service.ports.group }}"
 
     #innodb configuration
     innodb_buffer_pool_size=3910M    #Physical memory 50%
@@ -360,13 +360,129 @@ data:
     transaction_isolation=READ-COMMITTED
 
     [mysql]
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
     prompt=\\u@\\d \\r:\\m:\\s>
     no-auto-rehash
     socket=/mysql/mysql.sock
 
     [client]
-    port={{ .Values.global.mysql.service.ports.mysql }}
+    port={{ .Values.service.ports.mysql }}
+
+    [mysqladmin]
+    socket=/mysql/mysql.sock
+
+    [mysqldump]
+    quick
+    max_allowed_packet=256M
+{{- else if eq .Values.architecture "standalone" }}
+  my-0.cnf: |
+    [mysqld]
+    user=mysql
+    datadir=/mysql/data
+    tmpdir=/mysql/tmp
+    socket=/mysql/mysql.sock
+    pid-file=/mysql/mysql.pid
+    log_error=/mysql/mysql.err
+    slow_query_log_file=/mysql/mysql-slow.log
+    log-bin=/mysql/binlog/mysql
+    relay-log=/mysql/relaylog/mysql
+    log_timestamps=SYSTEM
+    default_time_zone="+8:00"
+    default_authentication_plugin=mysql_native_password
+    #General configuration
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_general_ci
+    init_connect='SET NAMES utf8mb4'
+    lower_case_table_names=1
+    skip-external-locking
+    open_files_limit=65536
+    safe-user-create
+    local-infile=1
+    performance_schema=ON
+    log_slow_admin_statements=1
+    long_query_time=1
+    slow_query_log=1
+    #query_cache_type=0
+    #query_cache_size=0
+
+    #Connection configuration
+    port={{ .Values.service.ports.mysql }}
+    skip-name-resolve
+    max_connections=3050
+    max_user_connections=1900
+    max_connect_errors=65536
+    max_allowed_packet=256M
+    connect_timeout=8
+    back_log=1024
+    lock_wait_timeout=20
+    table_definition_cache=2000
+    thread_cache_size=256
+    read_rnd_buffer_size=128K
+    sort_buffer_size=6M
+    join_buffer_size=1M
+    read_buffer_size=1M
+    tmp_table_size=64M
+    max_heap_table_size=64M
+    binlog_checksum=none
+    disabled_storage_engines="MyISAM,BLACKHOLE,FEDERATED,ARCHIVE,MEMORY"
+
+    #binlog  configuration
+    server-id=1
+    max_binlog_size=500M
+    binlog-format=ROW
+    log_replica_updates=1
+    #expire_logs_days=15
+    sync_binlog=1
+
+    #replication configuration
+    replica_net_timeout=120
+    gtid_mode=ON
+    enforce_gtid_consistency=1
+    relay_log_info_repository=TABLE # slave SQL thread crash safe
+    master_info_repository=TABLE
+    relay_log_recovery=0
+    replica_parallel_workers=8
+    replica_parallel_type='LOGICAL_CLOCK'
+    replica_preserve_commit_order=ON
+    transaction_write_set_extraction=XXHASH64
+
+    #innodb configuration
+    innodb_buffer_pool_size=3910M    #Physical memory 50%
+    innodb_buffer_pool_instances=8
+    innodb_buffer_pool_dump_at_shutdown=ON
+    innodb_buffer_pool_load_at_startup=ON
+    innodb_print_all_deadlocks=ON
+    innodb_log_files_in_group=2
+    innodb_log_file_size=1G
+    innodb_log_buffer_size=50M
+    innodb_flush_log_at_trx_commit=1
+    innodb_max_dirty_pages_pct=70
+    innodb_io_capacity=500     # SSD 2000 ~ 20000
+    innodb_thread_concurrency=16   #cpu core * 2
+    innodb_read_io_threads=8
+    innodb_write_io_threads=8
+    innodb_open_files=60000
+    innodb_file_per_table=1
+    innodb_flush_method=O_DIRECT
+    innodb_change_buffering=inserts
+    innodb_adaptive_flushing=1
+    innodb_old_blocks_time=1000
+    innodb_stats_on_metadata=0
+    innodb_lock_wait_timeout=5
+    innodb_rollback_on_timeout=0
+    innodb_purge_threads=2
+    innodb_strict_mode=1
+    transaction_isolation=READ-COMMITTED
+
+    [mysql]
+    port={{ .Values.service.ports.mysql }}
+    prompt=\\u@\\d \\r:\\m:\\s>
+    no-auto-rehash
+    socket=/mysql/mysql.sock
+
+    [client]
+    port={{ .Values.service.ports.mysql }}
+    default-character-set=utf8mb4
 
     [mysqladmin]
     socket=/mysql/mysql.sock
