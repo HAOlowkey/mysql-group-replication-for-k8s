@@ -35,9 +35,9 @@ image:
 auth:
   username: ""
   password: ""
-  rootPassword: "Root@123!"
-  replicationUser: "replicator"
-  replicationPassword: "Repl@123!"
+  rootPassword: ""
+  replicationUser: ""
+  replicationPassword: ""
 
 service:
   type: ClusterIP
@@ -159,10 +159,10 @@ proxysql:
   ## MySQL Authentication parameters
   ##
   auth:
-    monitorUser: "monitor"
-    monitorPassword: "Monitor@123!"
-    proxysqlUser: "admin"
-    proxysqlPassword: "admin"
+    monitorUser: ""
+    monitorPassword: ""
+    proxysqlUser: ""
+    proxysqlPassword: ""
 
   image:
     registry: docker.io

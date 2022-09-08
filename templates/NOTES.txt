@@ -1,0 +1,29 @@
+CHART NAME: {{ .Chart.Name }}
+CHART VERSION: {{ .Chart.Version }}
+APP VERSION: {{ .Chart.AppVersion }}
+
+** Please be patient while the chart is being deployed **
+
+Get the list of pods by executing:
+
+  kubectl get pods --namespace {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+Access the pod you want to debug by executing:
+
+  kubectl exec --namespace {{ .Release.Namespace }} -ti <NAME OF THE POD> -- bash
+
+Services:
+
+{{- if eq .Values.architecture "standalone" }}
+  echo MySQL: {{ include "mysql.fullname" . }}.{{ include "common.names.namespace" . }}.svc.cluster.local:{{ .Values.service.ports.mysql }}
+{{- else if eq .Values.architecture "group-replication" }}
+  echo ProxySQL: {{ include "proxysql.fullname" . }}.{{ include "common.names.namespace" . }}.svc.cluster.local:{{ .Values.proxysql.service.ports.proxysql }}
+{{- end }}
+
+Execute the following to get the administrator credentials:
+echo Username: root
+  mysql_root_password=$(kubectl get secret --namespace {{ include "common.names.namespace" . }} {{ include "mysql.fullname" . }} -o jsonpath="{.data.ROOT_PASSWORD}" | base64 -d)"
+
+echo New user:
+  username=$(kubectl get secret --namespace {{ include "common.names.namespace" . }} {{ include "mysql.fullname" . }} -o jsonpath="{.data.MYSQL_USER}" | base64 -d)"
+  password=$(kubectl get secret --namespace {{ include "common.names.namespace" . }} {{ include "mysql.fullname" . }} -o jsonpath="{.data.MYSQL_PASS}" | base64 -d)"
