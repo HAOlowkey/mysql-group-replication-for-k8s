@@ -65,7 +65,7 @@ spec:
         - /opt/run_service.sh
         - service
         - start
-        {{- if eq .Values.global.architecture "group-replication" }}
+        {{- if eq .Values.architecture "group-replication" }}
         lifecycle:
           postStart:
             exec:

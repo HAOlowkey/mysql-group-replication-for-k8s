@@ -484,6 +484,8 @@ main() {
 [ -v CONFIG_PATH ] || die 10 "Globals" "get env CONFIG_PATH failed !"
 [ -v ROOT_PASSWORD ] || die 10 "Globals" "get env ROOT_PASSWORD failed!"
 [ -v ARCH_MODE ] || die 10 "Globals" "get env ARCH_MODE failed!"
+[ -v MYSQL_USER ] || die 10 "Globals" "get env MYSQL_USER failed!"
+[ -v MYSQL_PASS ] || die 10 "Globals" "get env MYSQL_PASS failed!"
 if [[ "${ARCH_MODE}" == "group-replication" ]]; then
     [ -v REPL_USER ] || die 10 "Globals" "get env REPL_USER failed!"
     [ -v REPL_PASS ] || die 10 "Globals" "get env REPL_PASS failed!"

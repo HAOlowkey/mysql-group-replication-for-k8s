@@ -15,5 +15,5 @@ spec:
     {{- if contains "NodePort" .Values.service.type }}
     nodePort: {{.Values.proxysql.service.nodePorts.proxysql}}
     {{- end }}
-  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
+  selector: {{- include "proxysql.labels.matchLabels" . | nindent 4 }}
 {{- end }}

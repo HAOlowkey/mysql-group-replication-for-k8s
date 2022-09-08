@@ -28,8 +28,8 @@ data:
       server_version="8.0.26"
       connect_timeout_server=3000
       monitor_enabled=true
-      monitor_username="{{ .Values.auth.monitorUsername }}"
-      monitor_password="{{ .Values.auth.monitorPassword }}"
+      monitor_username="{{ .Values.proxysql.auth.monitorUsername }}"
+      monitor_password="{{ .Values.proxysql.auth.monitorPassword }}"
       monitor_history=600000
       monitor_connect_timeout=600
       monitor_connect_interval=2000
