@@ -85,7 +85,7 @@ spec:
         - name: {{ .Values.service.portsName.mysql }}
           containerPort: {{ .Values.service.ports.mysql }}
           protocol: TCP
-        {{- if eq .Values.global.architecture "group-replication" }}
+        {{- if eq .Values.architecture "group-replication" }}
         - name: {{ .Values.service.portsName.group }}
           containerPort: {{ .Values.service.ports.group }}
           protocol: TCP
