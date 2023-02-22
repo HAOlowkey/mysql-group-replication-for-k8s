@@ -25,6 +25,7 @@ $ helm uninstall my-release
 
 ### Common parameters
 | Name                      | Description                                     | Value |
+| ------------------------- | ----------------------------------------------- | ----- |
 | `architecture`     | MySQL architecture (`standalone` or `group-replication`) | `group-replication` |
 
 ### MySQL common parameters
