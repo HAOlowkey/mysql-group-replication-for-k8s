@@ -18,11 +18,14 @@ $ helm uninstall my-release
 
 | Name                      | Description                                     | Value |
 | ------------------------- | ----------------------------------------------- | ----- |
-| `global.architecture`     | MySQL architecture (`standalone` or group-replication`) | `group-replication` |
 | `global.auth.username`    | Name for a custom user to create | `""` |
 | `global.auth.password`    | Password for the new user | `""` |
 | `global.auth.monitorUsername`    | Name for ProxySQL user to create | `""` |
 | `global.auth.monitorPassword`    | Password for ProxySQL ser to create | `""` |
+
+### Common parameters
+| Name                      | Description                                     | Value |
+| `architecture`     | MySQL architecture (`standalone` or `group-replication`) | `group-replication` |
 
 ### MySQL common parameters
 
